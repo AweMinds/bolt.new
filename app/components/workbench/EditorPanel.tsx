@@ -140,6 +140,7 @@ export const EditorPanel = memo(
                   rootFolder={WORK_DIR}
                   selectedFile={selectedFile}
                   onFileSelect={onFileSelect}
+                  onFileDownload={(filePath) => workbenchStore.downloadFile(filePath)}
                 />
               </div>
             </Panel>

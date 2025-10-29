@@ -12,6 +12,7 @@ interface Props {
   files?: FileMap;
   selectedFile?: string;
   onFileSelect?: (filePath: string) => void;
+  onFileDownload?: (filePath: string) => void;
   rootFolder?: string;
   hideRoot?: boolean;
   collapsed?: boolean;
@@ -25,6 +26,7 @@ export const FileTree = memo(
   ({
     files = {},
     onFileSelect,
+    onFileDownload,
     selectedFile,
     rootFolder,
     hideRoot = false,
@@ -124,6 +126,7 @@ export const FileTree = memo(
                   onClick={() => {
                     onFileSelect?.(fileOrFolder.fullPath);
                   }}
+                  onDownload={onFileDownload ? () => onFileDownload(fileOrFolder.fullPath) : undefined}
                 />
               );
             }
@@ -184,9 +187,10 @@ interface FileProps {
   selected: boolean;
   unsavedChanges?: boolean;
   onClick: () => void;
+  onDownload?: () => void;
 }
 
-function File({ file: { depth, name }, onClick, selected, unsavedChanges = false }: FileProps) {
+function File({ file: { depth, name }, onClick, selected, unsavedChanges = false, onDownload }: FileProps) {
   return (
     <NodeButton
       className={classNames('group', {
@@ -206,6 +210,18 @@ function File({ file: { depth, name }, onClick, selected, unsavedChanges = false
       >
         <div className="flex-1 truncate pr-2">{name}</div>
         {unsavedChanges && <span className="i-ph:circle-fill scale-68 shrink-0 text-orange-500" />}
+        {onDownload && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDownload();
+            }}
+            className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-bolt-elements-item-backgroundActive rounded transition-opacity"
+            title="Download file"
+          >
+            <div className="i-ph:download-simple text-xs" />
+          </button>
+        )}
       </div>
     </NodeButton>
   );

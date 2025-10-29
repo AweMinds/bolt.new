@@ -11,8 +11,12 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
 
   const canHideChat = showWorkbench || !showChat;
 
+  const handleDownloadProject = async () => {
+    await workbenchStore.downloadProject();
+  };
+
   return (
-    <div className="flex">
+    <div className="flex gap-2">
       <div className="flex border border-bolt-elements-borderColor rounded-md overflow-hidden">
         <Button
           active={showChat}
@@ -39,6 +43,13 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
           <div className="i-ph:code-bold" />
         </Button>
       </div>
+      {showWorkbench && (
+        <div className="flex border border-bolt-elements-borderColor rounded-md overflow-hidden">
+          <Button onClick={handleDownloadProject} title="Download Project as ZIP">
+            <div className="i-ph:download-simple-bold" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -48,9 +59,10 @@ interface ButtonProps {
   disabled?: boolean;
   children?: any;
   onClick?: VoidFunction;
+  title?: string;
 }
 
-function Button({ active = false, disabled = false, children, onClick }: ButtonProps) {
+function Button({ active = false, disabled = false, children, onClick, title }: ButtonProps) {
   return (
     <button
       className={classNames('flex items-center p-1.5', {
@@ -61,6 +73,7 @@ function Button({ active = false, disabled = false, children, onClick }: ButtonP
           disabled,
       })}
       onClick={onClick}
+      title={title}
     >
       {children}
     </button>

@@ -9,6 +9,7 @@ import { EditorStore } from './editor';
 import { FilesStore, type FileMap } from './files';
 import { PreviewsStore } from './previews';
 import { TerminalStore } from './terminal';
+import { downloadProjectAsZip, downloadSingleFile } from '~/lib/exports/file-export';
 
 export interface ArtifactState {
   id: string;
@@ -265,6 +266,18 @@ export class WorkbenchStore {
     }
 
     artifact.runner.runAction(data);
+  }
+
+  async downloadProject(projectName?: string) {
+    const container = await webcontainer;
+    const fileMap = this.files.get();
+    await downloadProjectAsZip(container, fileMap, projectName);
+  }
+
+  async downloadFile(filePath: string) {
+    const container = await webcontainer;
+    const fileMap = this.files.get();
+    await downloadSingleFile(container, fileMap, filePath);
   }
 
   #getArtifact(id: string) {
