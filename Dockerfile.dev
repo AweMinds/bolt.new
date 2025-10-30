@@ -1,4 +1,4 @@
-# 开发模式 Dockerfile - 使用 Vite 开发服务器
+# 开发模式 Dockerfile
 FROM node:20-slim
 
 # 安装必要的系统依赖
@@ -18,7 +18,7 @@ ENV PATH=$PNPM_HOME:$PATH
 # 复制依赖配置文件
 COPY package.json pnpm-lock.yaml ./
 
-# 安装依赖（包括 devDependencies）
+# 安装依赖
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile
 
@@ -31,8 +31,8 @@ RUN mkdir -p .wrangler/tmp
 # 暴露 Vite 开发服务器端口
 EXPOSE 5173
 
-# 设置环境变量
+# 设置环境变量（开发模式）
 ENV NODE_ENV=development
 
-# 启动开发服务器（--host 0.0.0.0 允许外部访问）
+# 启动开发服务器
 CMD ["pnpm", "run", "dev", "--", "--host", "0.0.0.0"]

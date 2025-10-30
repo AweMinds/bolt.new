@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  bolt-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: bolt.new-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      # 挂载源代码以支持热重载
+      - ./app:/app/app
+      - ./public:/app/public
+      # 挂载环境变量文件
+      - ./.env.local:/app/.env.local:ro
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+    # 保持 node_modules 在容器内，不被覆盖
+    tmpfs:
+      - /app/node_modules
