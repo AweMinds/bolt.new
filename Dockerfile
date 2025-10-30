@@ -25,6 +25,9 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 # 复制所有源代码
 COPY . .
 
+# 修改 vite.config.ts 添加 server.host 配置以允许外部访问
+RUN sed -i '/return {/a\    server: { host: "0.0.0.0" },' vite.config.ts
+
 # 创建必要的目录
 RUN mkdir -p .wrangler/tmp
 
@@ -34,5 +37,5 @@ EXPOSE 5173
 # 设置环境变量
 ENV NODE_ENV=development
 
-# 启动开发服务器（--host 0.0.0.0 允许外部访问）
-CMD ["pnpm", "run", "dev", "--", "--host", "0.0.0.0"]
+# 启动开发服务器
+CMD ["pnpm", "run", "dev"]
