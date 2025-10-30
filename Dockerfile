@@ -1,5 +1,11 @@
 # 使用多阶段构建来优化镜像大小
-FROM node:20-alpine AS base
+# 使用 Debian slim 版本而不是 Alpine，因为 Cloudflare workerd 需要 glibc
+FROM node:20-slim AS base
+
+# 安装必要的系统依赖
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # 安装 pnpm
 RUN corepack enable && corepack prepare pnpm@9.4.0 --activate
@@ -44,9 +50,9 @@ FROM base AS runner
 # 设置环境变量
 ENV NODE_ENV=production
 
-# 创建非 root 用户
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 remix
+# 创建非 root 用户（Debian 语法）
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 -g nodejs -m remix
 
 # 复制必要的文件
 COPY --from=build --chown=remix:nodejs /app/build ./build
