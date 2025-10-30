@@ -95,4 +95,4 @@ USER remix
 EXPOSE 8788
 
 # 启动应用（生产模式，监听 0.0.0.0 以允许外部访问）
-CMD ["sh", "-c", "bindings=$(./bindings.sh) && wrangler pages dev ./build/client --ip 0.0.0.0 $bindings"]
+CMD ["pnpm", "run", "start"]
