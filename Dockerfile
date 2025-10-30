@@ -76,7 +76,13 @@ const handleRequest = createRequestHandler(remixBuild);\n\
 export default {\n\
   async fetch(request, env, ctx) {\n\
     try {\n\
-      return await handleRequest(request, { env, ctx });\n\
+      const loadContext = {\n\
+        cloudflare: {\n\
+          env,\n\
+          ctx,\n\
+        },\n\
+      };\n\
+      return await handleRequest(request, loadContext);\n\
     } catch (error) {\n\
       console.error(error);\n\
       return new Response("Internal Error", { status: 500 });\n\
