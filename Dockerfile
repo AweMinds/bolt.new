@@ -67,6 +67,23 @@ COPY --chown=remix:nodejs worker-configuration.d.ts ./
 # 确保 bindings.sh 可执行
 RUN chmod +x bindings.sh
 
+# 创建 Cloudflare Pages worker 文件以连接服务端代码
+RUN echo 'import * as remixBuild from "../server/index.js";\n\
+import { createRequestHandler } from "@remix-run/cloudflare";\n\
+\n\
+const handleRequest = createRequestHandler(remixBuild);\n\
+\n\
+export default {\n\
+  async fetch(request, env, ctx) {\n\
+    try {\n\
+      return await handleRequest(request, { env, ctx });\n\
+    } catch (error) {\n\
+      console.error(error);\n\
+      return new Response("Internal Error", { status: 500 });\n\
+    }\n\
+  },\n\
+};' > build/client/_worker.js
+
 # 创建 wrangler 需要的目录并设置整个应用目录的权限
 RUN mkdir -p .wrangler/tmp && \
     chown -R remix:nodejs /app
@@ -74,7 +91,8 @@ RUN mkdir -p .wrangler/tmp && \
 # 切换到非 root 用户
 USER remix
 
-EXPOSE 5173
+# 暴露端口（wrangler pages dev 使用 8788）
+EXPOSE 8788
 
-# 启动应用
-CMD ["pnpm", "run", "dev"]
+# 启动应用（生产模式，监听 0.0.0.0 以允许外部访问）
+CMD ["sh", "-c", "bindings=$(./bindings.sh) && wrangler pages dev ./build/client --ip 0.0.0.0 $bindings"]
