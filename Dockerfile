@@ -74,8 +74,7 @@ RUN mkdir -p .wrangler/tmp && \
 # 切换到非 root 用户
 USER remix
 
-# 暴露端口（wrangler pages dev 默认使用 8788）
-EXPOSE 8788
+EXPOSE 5173
 
 # 启动应用
-CMD ["pnpm", "run", "start"]
+CMD ["pnpm", "run", "dev"]
