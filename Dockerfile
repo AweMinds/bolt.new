@@ -84,6 +84,13 @@ export default {\n\
   },\n\
 };' > build/client/_worker.js
 
+# 创建 _routes.json 配置静态资源路由
+RUN echo '{\n\
+  "version": 1,\n\
+  "include": ["/*"],\n\
+  "exclude": ["/assets/*", "/*.ico", "/*.png", "/*.svg", "/*.jpg", "/*.jpeg", "/*.gif", "/*.webp"]\n\
+}' > build/client/_routes.json
+
 # 创建 wrangler 需要的目录并设置整个应用目录的权限
 RUN mkdir -p .wrangler/tmp && \
     chown -R remix:nodejs /app
