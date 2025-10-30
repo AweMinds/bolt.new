@@ -25,8 +25,8 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 # 复制所有源代码
 COPY . .
 
-# 修改 vite.config.ts 添加 server.host 配置以允许外部访问
-RUN sed -i '/return {/a\    server: { host: "0.0.0.0" },' vite.config.ts
+# 修改 vite.config.ts 添加 server 配置（支持外部访问和跨域隔离）
+RUN sed -i '/return {/a\    server: {\n      host: "0.0.0.0",\n      headers: {\n        "Cross-Origin-Opener-Policy": "same-origin",\n        "Cross-Origin-Embedder-Policy": "require-corp",\n      },\n    },' vite.config.ts
 
 # 创建必要的目录
 RUN mkdir -p .wrangler/tmp
