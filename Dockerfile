@@ -67,6 +67,10 @@ COPY --chown=remix:nodejs worker-configuration.d.ts ./
 # 确保 bindings.sh 可执行
 RUN chmod +x bindings.sh
 
+# 创建 wrangler 需要的目录并设置整个应用目录的权限
+RUN mkdir -p .wrangler/tmp && \
+    chown -R remix:nodejs /app
+
 # 切换到非 root 用户
 USER remix
 
